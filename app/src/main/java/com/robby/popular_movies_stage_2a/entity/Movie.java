@@ -1,6 +1,5 @@
 package com.robby.popular_movies_stage_2a.entity;
 
-import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -25,7 +24,7 @@ public class Movie implements Parcelable {
     private double voteAverage;
     private String title;
     private String posterPath;
-    private Bitmap poster;
+    private byte[] poster;
     private String overview;
     private String releaseDate;
 
@@ -33,12 +32,13 @@ public class Movie implements Parcelable {
     public Movie() {
     }
 
+
     protected Movie(Parcel in) {
         id = in.readString();
         voteAverage = in.readDouble();
         title = in.readString();
         posterPath = in.readString();
-        poster = in.readParcelable(Bitmap.class.getClassLoader());
+        poster = in.createByteArray();
         overview = in.readString();
         releaseDate = in.readString();
     }
@@ -55,21 +55,6 @@ public class Movie implements Parcelable {
         }
     };
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(id);
-        parcel.writeDouble(voteAverage);
-        parcel.writeString(title);
-        parcel.writeString(posterPath);
-        parcel.writeParcelable(poster, i);
-        parcel.writeString(overview);
-        parcel.writeString(releaseDate);
-    }
     public String getId() {
         return id;
     }
@@ -118,11 +103,27 @@ public class Movie implements Parcelable {
         this.releaseDate = releaseDate;
     }
 
-    public Bitmap getPoster() {
+    public byte[] getPoster() {
         return poster;
     }
 
-    public void setPoster(Bitmap poster) {
+    public void setPoster(byte[] poster) {
         this.poster = poster;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(id);
+        parcel.writeDouble(voteAverage);
+        parcel.writeString(title);
+        parcel.writeString(posterPath);
+        parcel.writeByteArray(poster);
+        parcel.writeString(overview);
+        parcel.writeString(releaseDate);
     }
 }

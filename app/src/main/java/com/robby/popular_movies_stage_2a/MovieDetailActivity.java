@@ -22,6 +22,8 @@ public class MovieDetailActivity extends AppCompatActivity {
         Movie m = getIntent().getParcelableExtra(getResources().getString(R.string.send_parcel_movie));
         Bundle arguments = new Bundle();
         arguments.putParcelable(getResources().getString(R.string.send_parcel_movie), m);
+//        arguments.putByteArray(getResources().getString(R.string.bundle_parcel_bitmap),
+//                getIntent().getByteArrayExtra(getResources().getString(R.string.bundle_parcel_bitmap)));
         MovieDetailFragment fragment = new MovieDetailFragment();
         fragment.setArguments(arguments);
         getFragmentManager().beginTransaction()

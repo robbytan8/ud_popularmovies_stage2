@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     RecyclerView rvMovies;
 
     private MovieAdapter movieAdapter = new MovieAdapter();
-    private MovieOpenHelper movieOpenHelper;
+    public static MovieOpenHelper movieOpenHelper;
     private boolean twoPane;
 
     @Override
@@ -69,14 +69,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         });
         rvMovies.setAdapter(movieAdapter);
-        if (savedInstanceState != null) {
-            movieAdapter.setMovies(savedInstanceState.<Movie>getParcelableArrayList(getResources().getString(R.string.bundle_parcel_movie)));
-            setTitle(savedInstanceState.getString(getResources().getString(R.string.bundle_app_title)));
-            showData();
+        if (savedInstanceState == null) {
+            getMoviesFromTmdb(BuildConfig.POP_URL);
         } else if (savedInstanceState != null && savedInstanceState.getParcelableArrayList(getResources().getString(R.string.bundle_parcel_movie)).size() == 0) {
             getMoviesFromTmdb(BuildConfig.POP_URL);
         } else {
-            getMoviesFromTmdb(BuildConfig.POP_URL);
+            movieAdapter.setMovies(savedInstanceState.<Movie>getParcelableArrayList(getResources().getString(R.string.bundle_parcel_movie)));
+            setTitle(savedInstanceState.getString(getResources().getString(R.string.bundle_app_title)));
+            showData();
         }
 
         if (findViewById(R.id.container_detail) != null) {
@@ -209,9 +209,5 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     public boolean isTwoPane() {
         return twoPane;
-    }
-
-    public MovieOpenHelper getMovieOpenHelper() {
-        return movieOpenHelper;
     }
 }

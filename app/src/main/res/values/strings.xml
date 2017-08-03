@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Popular_Movies-Stage-2a</string>
+    <string name="app_name">Pop Movies</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="popular_title">Popular Movies</string>
     <string name="top_rated_title">Top Rated Movies</string>
@@ -8,6 +8,7 @@
     <string name="detail_movie">Movie Details</string>
     <string name="send_parcel_movie" translatable="false">SEND_PARCELABLE_MOVIE</string>
     <string name="bundle_parcel_movie" translatable="false">BUNDLE_PARCELABLE_MOVIE</string>
+    <string name="bundle_parcel_bitmap" translatable="false">BUNDLE_PARCELABLE_BITMAP</string>
     <string name="bundle_app_title" translatable="false">BUNDLE_APP_TITLE</string>
     <string name="text_more">More</string>
     <string name="text_less">Less</string>

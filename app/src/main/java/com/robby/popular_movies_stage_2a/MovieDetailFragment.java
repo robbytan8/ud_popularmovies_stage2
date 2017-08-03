@@ -26,7 +26,6 @@ import com.robby.popular_movies_stage_2a.entity.MovieReview;
 import com.robby.popular_movies_stage_2a.entity.MovieTrailer;
 import com.robby.popular_movies_stage_2a.utilities.DbBitmapUtility;
 import com.robby.popular_movies_stage_2a.utilities.JSONConverter;
-import com.robby.popular_movies_stage_2a.utilities.MovieOpenHelper;
 import com.robby.popular_movies_stage_2a.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
@@ -75,7 +74,6 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
 
     private MovieReviewAdapter movieReviewAdapter;
     private MovieTrailerAdapter movieTrailerAdapter;
-    private MovieOpenHelper movieOpenHelper;
     private Movie movie;
     private static final int MOVIE_REVIEW_ID = 919;
     private static final int MOVIE_TRAILER_ID = 920;
@@ -151,7 +149,6 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
                 dialogFragment.show(getFragmentManager(), key);
             }
         });
-        movieOpenHelper = ((MainActivity) getActivity()).getMovieOpenHelper();
     }
 
     @Override
@@ -174,20 +171,8 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
                     .load(movie.getPosterPath())
                     .into(ivMoviePoster);
         } else {
-            ivMoviePoster.setImageBitmap(movie.getPoster());
+            ivMoviePoster.setImageBitmap(DbBitmapUtility.getImage(movie.getPoster()));
         }
-        tvMovieOverview.post(new Runnable() {
-            @Override
-            public void run() {
-                if (tvMovieOverview.getLineCount() > 5 && tvMore.getVisibility() == View.INVISIBLE) {
-                    tvMore.setVisibility(View.VISIBLE);
-                } else if (tvMovieOverview.getLineCount() > 5 && tvMore.getVisibility() == View.VISIBLE) {
-//                        showMore();
-                } else if (tvMovieOverview.getLineCount() > 5 && tvLess.getVisibility() == View.VISIBLE) {
-//                        showLess();
-                }
-            }
-        });
         rvReviews.setLayoutManager(new LinearLayoutManager(this.getActivity()));
         rvReviews.setHasFixedSize(true);
         rvReviews.setAdapter(movieReviewAdapter);
@@ -283,9 +268,8 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
 
     @OnClick(R.id.ib_favorite)
     public void markMovieAsFavorite() {
-        movieOpenHelper.addFavoriteMovie(movie.getId(), movie.getTitle(), movie.getOverview(),
-                DbBitmapUtility.getBytes(movie.getPoster()), movie.getVoteAverage(),
-                movie.getReleaseDate());
-        Toast.makeText(getActivity(), movie.getReleaseDate(), Toast.LENGTH_SHORT).show();
+        MainActivity.movieOpenHelper.addFavoriteMovie(movie.getId(), movie.getTitle(), movie.getOverview(),
+                movie.getPoster(), movie.getVoteAverage(), movie.getReleaseDate());
+        Toast.makeText(getActivity(), "Add " + movie.getTitle() + " as favorite", Toast.LENGTH_SHORT).show();
     }
 }

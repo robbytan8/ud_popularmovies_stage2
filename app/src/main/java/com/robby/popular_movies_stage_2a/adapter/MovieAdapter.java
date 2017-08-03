@@ -16,6 +16,7 @@ import com.robby.popular_movies_stage_2a.MovieDetailActivity;
 import com.robby.popular_movies_stage_2a.MovieDetailFragment;
 import com.robby.popular_movies_stage_2a.R;
 import com.robby.popular_movies_stage_2a.entity.Movie;
+import com.robby.popular_movies_stage_2a.utilities.DbBitmapUtility;
 import com.robby.popular_movies_stage_2a.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -48,9 +49,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     public void onBindViewHolder(final MovieViewHolder holder, final int position) {
         if (NetworkUtils.hasInternetConnection(context)) {
             Target target = new Target() {
+
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    movies.get(position).setPoster(bitmap);
+//                    movies.get(position).setPoster(DbBitmapUtility.getBytes(bitmap));
                     holder.imMovieGrid.setImageBitmap(bitmap);
                 }
 
@@ -68,8 +70,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             Picasso.with(context)
                     .load(movies.get(position).getPosterPath())
                     .into(target);
+        } else {
+            holder.imMovieGrid.setImageBitmap(DbBitmapUtility.getImage(movies.get(position).getPoster()));
         }
-        holder.imMovieGrid.setImageBitmap(movies.get(position).getPoster());
     }
 
     @Override
@@ -107,8 +110,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
                                 .replace(R.id.container_detail, fragment)
                                 .commit();
                     } else {
+                        Movie movie = movies.get(getAdapterPosition());
                         Intent intent = new Intent(context, MovieDetailActivity.class);
-                        intent.putExtra(context.getResources().getString(R.string.send_parcel_movie), movies.get(getAdapterPosition()));
+                        intent.putExtra(context.getResources().getString(R.string.send_parcel_movie), movie);
                         context.startActivity(intent);
                     }
                 }

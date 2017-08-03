@@ -31,8 +31,6 @@ public class MovieOpenHelper extends SQLiteOpenHelper {
     private static final String COL_RELEASE = "release_date";
     private static final String COL_POSTER = "poster";
 
-    private static final String[] COLUMNS = {COL_ID, COL_TITLE, COL_OVERVIEW, COL_POSTER, COL_RATE, COL_RELEASE};
-
     private static final String TABLE_CREATION_QUERY = "CREATE TABLE " + TABLE_NAME + " ("
             + COL_ID + " TEXT PRIMARY KEY, "
             + COL_TITLE + " TEXT, "
@@ -78,7 +76,7 @@ public class MovieOpenHelper extends SQLiteOpenHelper {
                     movie.setOverview(cursor.getString(cursor.getColumnIndex(COL_OVERVIEW)));
                     movie.setVoteAverage(Double.parseDouble(cursor.getString(cursor.getColumnIndex(COL_RATE))));
                     movie.setReleaseDate(cursor.getString(cursor.getColumnIndex(COL_RELEASE)));
-                    movie.setPoster(DbBitmapUtility.getImage(cursor.getBlob(cursor.getColumnIndex(COL_POSTER))));
+                    movie.setPoster(cursor.getBlob(cursor.getColumnIndex(COL_POSTER)));
                     movies.add(movie);
                 } while (cursor.moveToNext());
             }
@@ -86,9 +84,11 @@ public class MovieOpenHelper extends SQLiteOpenHelper {
             Log.d(this.getClass().getName(), "QUERY EXCEPTION! " + e.getMessage());
             e.printStackTrace();
         } finally {
-            cursor.close();
-            return movies;
+            if (cursor != null) {
+                cursor.close();
+            }
         }
+        return movies;
     }
 
     public long addFavoriteMovie(String id, String title, String overview, byte[] poster, double rate, String release) {
