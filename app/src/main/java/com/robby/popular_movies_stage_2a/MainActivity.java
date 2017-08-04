@@ -71,12 +71,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         rvMovies.setAdapter(movieAdapter);
         if (savedInstanceState == null) {
             getMoviesFromTmdb(BuildConfig.POP_URL);
-        } else if (savedInstanceState != null && savedInstanceState.getParcelableArrayList(getResources().getString(R.string.bundle_parcel_movie)).size() == 0) {
+        } else if (savedInstanceState != null
+                && savedInstanceState.getParcelableArrayList(getResources().getString(R.string.bundle_parcel_movie)).size() == 0) {
             getMoviesFromTmdb(BuildConfig.POP_URL);
-        } else {
-            movieAdapter.setMovies(savedInstanceState.<Movie>getParcelableArrayList(getResources().getString(R.string.bundle_parcel_movie)));
-            setTitle(savedInstanceState.getString(getResources().getString(R.string.bundle_app_title)));
-            showData();
         }
 
         if (findViewById(R.id.container_detail) != null) {
@@ -111,8 +108,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(getResources().getString(R.string.bundle_parcel_movie), movieAdapter.getMovies());
         outState.putString(getResources().getString(R.string.bundle_app_title), getTitle().toString());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        movieAdapter.setMovies(savedInstanceState.<Movie>getParcelableArrayList(getResources().getString(R.string.bundle_parcel_movie)));
+        setTitle(savedInstanceState.getString(getResources().getString(R.string.bundle_app_title)));
+        showData();
     }
 
     @Override
