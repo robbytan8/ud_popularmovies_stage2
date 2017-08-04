@@ -10,12 +10,14 @@ import android.content.Loader;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +55,8 @@ import butterknife.OnClick;
 
 public class MovieDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<MovieReview>>, OpenOtherAppDialogFragment.MyDialogListener {
 
+    @BindView(R.id.sv_fragment)
+    ScrollView svFragment;
     @BindView(R.id.tv_movie_overview)
     TextView tvMovieOverview;
     @BindView(R.id.tv_movie_rating_detail)
@@ -270,6 +274,6 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     public void markMovieAsFavorite() {
         MainActivity.movieOpenHelper.addFavoriteMovie(movie.getId(), movie.getTitle(), movie.getOverview(),
                 movie.getPoster(), movie.getVoteAverage(), movie.getReleaseDate());
-        Toast.makeText(getActivity(), "Add " + movie.getTitle() + " as favorite", Toast.LENGTH_SHORT).show();
+        Snackbar.make(svFragment, "Add " + movie.getTitle() + " as favorite", Snackbar.LENGTH_SHORT).show();
     }
 }
