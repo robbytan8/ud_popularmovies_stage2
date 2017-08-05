@@ -10,6 +10,7 @@ import android.content.Loader;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,7 +18,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,8 +55,8 @@ import butterknife.OnClick;
 
 public class MovieDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<MovieReview>>, OpenOtherAppDialogFragment.MyDialogListener {
 
-    @BindView(R.id.sv_fragment)
-    ScrollView svFragment;
+    @BindView(R.id.fragment_root)
+    CoordinatorLayout coordinatorLayout;
     @BindView(R.id.tv_movie_overview)
     TextView tvMovieOverview;
     @BindView(R.id.tv_movie_rating_detail)
@@ -65,10 +65,6 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     TextView tvMovieReleaseDate;
     @BindView(R.id.tv_movie_title_detail)
     TextView tvMovieTitle;
-    @BindView(R.id.tv_more)
-    TextView tvMore;
-    @BindView(R.id.tv_less)
-    TextView tvLess;
     @BindView(R.id.im_movie_poster_detail)
     ImageView ivMoviePoster;
     @BindView(R.id.rv_reviews)
@@ -270,10 +266,10 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
         }
     }
 
-    @OnClick(R.id.ib_favorite)
+    @OnClick(R.id.fab_favorite)
     public void markMovieAsFavorite() {
         MainActivity.movieOpenHelper.addFavoriteMovie(movie.getId(), movie.getTitle(), movie.getOverview(),
                 movie.getPoster(), movie.getVoteAverage(), movie.getReleaseDate());
-        Snackbar.make(svFragment, "Add " + movie.getTitle() + " as favorite", Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(coordinatorLayout, "Add " + movie.getTitle() + " as favorite", Snackbar.LENGTH_SHORT).show();
     }
 }
