@@ -177,7 +177,7 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
         rvReviews.setHasFixedSize(true);
         rvReviews.setAdapter(movieReviewAdapter);
 
-        rvTrailers.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+        rvTrailers.setLayoutManager(new LinearLayoutManager(this.getActivity(), LinearLayoutManager.HORIZONTAL, false));
         rvTrailers.setHasFixedSize(true);
         rvTrailers.setAdapter(movieTrailerAdapter);
         this.loadMovieReviewsAndTrailers();
