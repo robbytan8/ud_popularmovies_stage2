@@ -1,5 +1,6 @@
 package com.robby.popular_movies_stage_2a;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import com.robby.popular_movies_stage_2a.adapter.MovieAdapter;
 import com.robby.popular_movies_stage_2a.entity.Movie;
+import com.robby.popular_movies_stage_2a.utilities.Contract;
 import com.robby.popular_movies_stage_2a.utilities.JSONConverter;
 import com.robby.popular_movies_stage_2a.utilities.MovieOpenHelper;
 import com.robby.popular_movies_stage_2a.utilities.NetworkUtils;
@@ -29,6 +31,13 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.robby.popular_movies_stage_2a.utilities.Contract.MovieList.COL_ID;
+import static com.robby.popular_movies_stage_2a.utilities.Contract.MovieList.COL_OVERVIEW;
+import static com.robby.popular_movies_stage_2a.utilities.Contract.MovieList.COL_POSTER;
+import static com.robby.popular_movies_stage_2a.utilities.Contract.MovieList.COL_RATE;
+import static com.robby.popular_movies_stage_2a.utilities.Contract.MovieList.COL_RELEASE;
+import static com.robby.popular_movies_stage_2a.utilities.Contract.MovieList.COL_TITLE;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<Movie>> {
 
@@ -100,7 +109,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 return true;
             case R.id.action_fav:
                 setTitle(getResources().getString(R.string.favorite_title));
-                getMovieFromSQlite();
+//                getMovieFromSQlite();
+                getMovieFromContentProvider();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -208,6 +218,51 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private void getMovieFromSQlite() {
         if (movieOpenHelper.count(null) != 0) {
             movieAdapter.setMovies(movieOpenHelper.query());
+        } else {
+            Toast.makeText(this, "Favorite list is empty", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void getMovieFromContentProvider() {
+        /*
+        Cursor cursor =
+                mContext.getContentResolver().query(Uri.parse(
+                        queryUri), null, null, null, sortOrder);
+        if (cursor != null) {
+            if (cursor.moveToPosition(position)) {
+                int indexWord = cursor.getColumnIndex(Contract.WordList.KEY_WORD);
+                word = cursor.getString(indexWord);
+                holder.wordItemView.setText(word);
+                int indexId = cursor.getColumnIndex(Contract.WordList.KEY_ID);
+                id = cursor.getInt(indexId);
+            } else {
+                holder.wordItemView.setText(R.string.error_no_word);
+            }
+            cursor.close();
+        } else {
+            Log.e (TAG, "onBindViewHolder: Cursor is null.");
+        }
+         */
+//        if (movieOpenHelper.count(null) != 0) {
+//            movieAdapter.setMovies(movieOpenHelper.query());
+//        } else {
+//        }
+        Cursor cursor = getContentResolver().query(Contract.CONTENT_URI, null, null, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                ArrayList<Movie> movies = new ArrayList<>();
+                do {
+                    Movie movie = new Movie();
+                    movie.setId(cursor.getString(cursor.getColumnIndex(COL_ID)));
+                    movie.setTitle(cursor.getString(cursor.getColumnIndex(COL_TITLE)));
+                    movie.setOverview(cursor.getString(cursor.getColumnIndex(COL_OVERVIEW)));
+                    movie.setVoteAverage(Double.parseDouble(cursor.getString(cursor.getColumnIndex(COL_RATE))));
+                    movie.setReleaseDate(cursor.getString(cursor.getColumnIndex(COL_RELEASE)));
+                    movie.setPoster(cursor.getBlob(cursor.getColumnIndex(COL_POSTER)));
+                    movies.add(movie);
+                } while (cursor.moveToNext());
+                movieAdapter.setMovies(movies);
+            }
         } else {
             Toast.makeText(this, "Favorite list is empty", Toast.LENGTH_SHORT).show();
         }

@@ -30,6 +30,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+        <provider
+            android:authorities="com.robby.popular_movies_stage_2a.utilities.MovieContentProvider"
+            android:name=".utilities.MovieContentProvider"
+            android:exported="true" />
     </application>
 
 </manifest>

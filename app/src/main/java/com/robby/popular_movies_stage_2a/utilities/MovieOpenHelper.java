@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
+import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -11,6 +12,15 @@ import android.util.Log;
 import com.robby.popular_movies_stage_2a.entity.Movie;
 
 import java.util.ArrayList;
+
+import static com.robby.popular_movies_stage_2a.utilities.Contract.MovieList.COL_ID;
+import static com.robby.popular_movies_stage_2a.utilities.Contract.MovieList.COL_OVERVIEW;
+import static com.robby.popular_movies_stage_2a.utilities.Contract.MovieList.COL_POSTER;
+import static com.robby.popular_movies_stage_2a.utilities.Contract.MovieList.COL_RATE;
+import static com.robby.popular_movies_stage_2a.utilities.Contract.MovieList.COL_RELEASE;
+import static com.robby.popular_movies_stage_2a.utilities.Contract.MovieList.COL_TITLE;
+import static com.robby.popular_movies_stage_2a.utilities.Contract.MovieList.TABLE_NAME;
+import static com.robby.popular_movies_stage_2a.utilities.Contract.DATABASE_NAME;
 
 /**
  * Created by Robby on 7/31/2017.
@@ -21,15 +31,6 @@ import java.util.ArrayList;
 public class MovieOpenHelper extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "fav_movies";
-    private static final String TABLE_NAME = "table_favorite";
-
-    private static final String COL_ID = "_id";
-    private static final String COL_TITLE = "title";
-    private static final String COL_RATE = "rate";
-    private static final String COL_OVERVIEW = "overview";
-    private static final String COL_RELEASE = "release_date";
-    private static final String COL_POSTER = "poster";
 
     private static final String TABLE_CREATION_QUERY = "CREATE TABLE " + TABLE_NAME + " ("
             + COL_ID + " TEXT PRIMARY KEY, "
@@ -55,6 +56,26 @@ public class MovieOpenHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(sqLiteDatabase);
+    }
+
+    /**
+     * Used directly
+     *
+     * @return
+     */
+    public Cursor cursorQuery() {
+        String query = "SELECT * FROM " + TABLE_NAME;
+        Cursor cursor = null;
+        try {
+            if (mReadableDb == null) {
+                mReadableDb = getReadableDatabase();
+            }
+            cursor = mReadableDb.rawQuery(query, null);
+        } catch (Exception e) {
+            Log.d(this.getClass().getName(), "QUERY EXCEPTION! " + e.getMessage());
+            e.printStackTrace();
+        }
+        return cursor;
     }
 
     public ArrayList<Movie> query() {
@@ -89,6 +110,19 @@ public class MovieOpenHelper extends SQLiteOpenHelper {
             }
         }
         return movies;
+    }
+
+    public long addFavoriteMovie(ContentValues contentValues) {
+        long newId = 0;
+        try {
+            if (mWritableDb == null) {
+                mWritableDb = getWritableDatabase();
+            }
+            newId = mWritableDb.insert(TABLE_NAME, null, contentValues);
+        } catch (Exception e) {
+            Log.e(this.getClass().getName(), "INSERT EXCEPTION : " + e.getMessage());
+        }
+        return newId;
     }
 
     public long addFavoriteMovie(String id, String title, String overview, byte[] poster, double rate, String release) {
@@ -128,6 +162,21 @@ public class MovieOpenHelper extends SQLiteOpenHelper {
             Log.e(this.getClass().getName(), "DELETE EXCEPTION : " + e.getMessage());
         }
         return deleted;
+    }
+
+    public Cursor countCursor(String id) {
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{});
+        if (mReadableDb == null) {
+            mReadableDb = getReadableDatabase();
+        }
+        if (id != null) {
+            int count = (int) DatabaseUtils.queryNumEntries(mReadableDb, TABLE_NAME, COL_ID + " = " + id);
+            matrixCursor.addRow(new Object[]{count});
+        } else {
+            int count = (int) DatabaseUtils.queryNumEntries(mReadableDb, TABLE_NAME);
+            matrixCursor.addRow(new Object[]{count});
+        }
+        return matrixCursor;
     }
 
     public long count(String id) {

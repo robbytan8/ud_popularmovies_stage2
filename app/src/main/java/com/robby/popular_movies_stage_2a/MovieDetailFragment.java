@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.AsyncTaskLoader;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.Loader;
 import android.net.Uri;
@@ -26,6 +27,7 @@ import com.robby.popular_movies_stage_2a.adapter.MovieTrailerAdapter;
 import com.robby.popular_movies_stage_2a.entity.Movie;
 import com.robby.popular_movies_stage_2a.entity.MovieReview;
 import com.robby.popular_movies_stage_2a.entity.MovieTrailer;
+import com.robby.popular_movies_stage_2a.utilities.Contract;
 import com.robby.popular_movies_stage_2a.utilities.DbBitmapUtility;
 import com.robby.popular_movies_stage_2a.utilities.JSONConverter;
 import com.robby.popular_movies_stage_2a.utilities.NetworkUtils;
@@ -41,6 +43,13 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.robby.popular_movies_stage_2a.utilities.Contract.MovieList.COL_ID;
+import static com.robby.popular_movies_stage_2a.utilities.Contract.MovieList.COL_OVERVIEW;
+import static com.robby.popular_movies_stage_2a.utilities.Contract.MovieList.COL_POSTER;
+import static com.robby.popular_movies_stage_2a.utilities.Contract.MovieList.COL_RATE;
+import static com.robby.popular_movies_stage_2a.utilities.Contract.MovieList.COL_RELEASE;
+import static com.robby.popular_movies_stage_2a.utilities.Contract.MovieList.COL_TITLE;
 
 //import android.support.v4.app.LoaderManager;
 //import android.support.v4.content.AsyncTaskLoader;
@@ -268,8 +277,16 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
 
     @OnClick(R.id.fab_favorite)
     public void markMovieAsFavorite() {
-        MainActivity.movieOpenHelper.addFavoriteMovie(movie.getId(), movie.getTitle(), movie.getOverview(),
-                movie.getPoster(), movie.getVoteAverage(), movie.getReleaseDate());
+//        MainActivity.movieOpenHelper.addFavoriteMovie(movie.getId(), movie.getTitle(), movie.getOverview(),
+//                movie.getPoster(), movie.getVoteAverage(), movie.getReleaseDate());
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_ID, movie.getId());
+        contentValues.put(COL_TITLE, movie.getTitle());
+        contentValues.put(COL_OVERVIEW, movie.getOverview());
+        contentValues.put(COL_POSTER, movie.getPosterPath());
+        contentValues.put(COL_RATE, movie.getVoteAverage());
+        contentValues.put(COL_RELEASE, movie.getReleaseDate());
+        getActivity().getContentResolver().insert(Contract.CONTENT_URI, contentValues);
         Snackbar.make(coordinatorLayout, "Add " + movie.getTitle() + " as favorite", Snackbar.LENGTH_SHORT).show();
     }
 }

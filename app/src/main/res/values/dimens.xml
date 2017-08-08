@@ -4,4 +4,6 @@
     <dimen name="margin_component">8dp</dimen>
     <dimen name="title_padding">15dp</dimen>
     <dimen name="title_text_size">26sp</dimen>
+    <dimen name="horizontal_line">2dp</dimen>
+    <dimen name="rv_max">120dp</dimen>
 </resources>
